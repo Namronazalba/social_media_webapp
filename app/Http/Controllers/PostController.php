@@ -4,18 +4,39 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Friendship;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        // Show posts for logged-in user (and later friends)
-        $posts = \App\Models\Post::where('user_id', auth()->id())
-            ->latest()
-            ->get();
+public function index()
+{
+    $userId = auth()->id();
 
-        return view('dashboard', compact('posts'));
-    }
+    // Get all accepted friendships where user is either sender or receiver
+    $friendIds = Friendship::where(function ($q) use ($userId) {
+            $q->where('sender_id', $userId)
+              ->orWhere('receiver_id', $userId);
+        })
+        ->where('status', 'accepted')
+        ->get()
+        ->map(function ($friendship) use ($userId) {
+            return $friendship->sender_id == $userId
+                ? $friendship->receiver_id
+                : $friendship->sender_id;
+        })
+        ->toArray();
+
+    // Combine user’s ID + friend IDs
+    $visibleIds = array_merge([$userId], $friendIds);
+
+    // Fetch posts from user and friends, newest first
+    $posts = Post::whereIn('user_id', $visibleIds)
+                ->with('user')
+                ->latest()
+                ->get();
+
+    return view('dashboard', compact('posts'));
+}
 
     public function store(Request $request)
     {

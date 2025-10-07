@@ -41,4 +41,31 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(Friendship::class, 'sender_id');
+    }
+
+    public function receivedFriendRequests()
+    {
+        return $this->hasMany(Friendship::class, 'receiver_id');
+    }
+
+    public function friends()
+    {
+        return User::whereIn('id', function ($query) {
+            $query->select('receiver_id')
+                ->from('friendships')
+                ->where('sender_id', $this->id)
+                ->where('status', 'accepted');
+        })
+        ->orWhereIn('id', function ($query) {
+            $query->select('sender_id')
+                ->from('friendships')
+                ->where('receiver_id', $this->id)
+                ->where('status', 'accepted');
+        });
+    }
+
 }

@@ -15,6 +15,33 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('friends.index')" :active="request()->routeIs('friends.index')">
+                        {{ __('Find Friends') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('friends.list')" :active="request()->routeIs('friends.list')">
+                        {{ __('Friends') }}
+                    </x-nav-link>
+
+                    @php
+                        $pendingCount = \App\Models\Friendship::where('receiver_id', auth()->id())
+                            ->where('status', 'pending')
+                            ->count();
+                    @endphp
+
+                    <div class="flex justify-end pr-6 mt-3">
+                        <a href="{{ route('friends.requests') }}" 
+                        class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
+                            🔔
+                            @if($pendingCount > 0)
+                                <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+                                    {{ $pendingCount }}
+                                </span>
+                            @endif
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
@@ -70,6 +97,32 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            <x-nav-link :href="route('friends.index')" :active="request()->routeIs('friends.index')">
+                {{ __('Find Friends') }}
+            </x-nav-link>
+
+            <x-nav-link :href="route('friends.list')" :active="request()->routeIs('friends.list')">
+                {{ __('Friends') }}
+            </x-nav-link>
+
+            @php
+                $pendingCount = \App\Models\Friendship::where('receiver_id', auth()->id())
+                    ->where('status', 'pending')
+                    ->count();
+            @endphp
+
+            <div class="flex justify-end pr-6 mt-3">
+                <a href="{{ route('friends.requests') }}" 
+                class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
+                    🔔
+                    @if($pendingCount > 0)
+                        <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+                            {{ $pendingCount }}
+                        </span>
+                    @endif
+                </a>
+                    </div>
         </div>
 
         <!-- Responsive Settings Options -->

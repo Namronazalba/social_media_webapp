@@ -3,16 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\FriendshipController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,6 +23,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+    Route::get('/users', [FriendshipController::class, 'index'])->name('friends.index');
+    Route::post('/friends/{id}', [FriendshipController::class, 'addFriend'])->name('friends.add');
+    Route::get('/users/{id}', [FriendshipController::class, 'showProfile'])->name('friends.profile');
+
+    Route::get('/friends/requests', [FriendshipController::class, 'requests'])->name('friends.requests');
+    Route::post('/friends/{id}/accept', [FriendshipController::class, 'accept'])->name('friends.accept');
+    Route::post('/friends/{id}/ignore', [FriendshipController::class, 'ignore'])->name('friends.ignore');
+    Route::delete('/friends/{id}/cancel', [FriendshipController::class, 'cancel'])->name('friends.cancel');
+
+    Route::get('/friends/list', [FriendshipController::class, 'friendsList'])->name('friends.list');
+    Route::get('/friends/{id}', [FriendshipController::class, 'show'])->name('friends.profile');
+
+
+
 });
 
 require __DIR__.'/auth.php';

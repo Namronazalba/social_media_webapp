@@ -22,7 +22,8 @@
             <h2 class="text-xl font-semibold mb-2">Your Posts</h2>
             @forelse($posts as $post)
                 <div class="relative bg-white p-5 rounded-lg shadow">
-                    <!-- Burger Menu -->
+                <!-- Burger Menu (only for own posts) -->
+                @if($post->user_id === auth()->id())
                     <div x-data="{ open: false }" class="absolute top-4 right-4 z-20">
                         <button @click="open = !open"
                             class="text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -44,6 +45,20 @@
                             </form>
                         </div>
                     </div>
+                @else
+                    <div x-data="{ open: false }" class="absolute top-4 right-4 z-20">
+                        <button @click="open = !open" class="text-gray-400 hover:text-gray-600">⋮</button>
+                        <div x-show="open" @click.away="open = false"
+                            class="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-30">
+                            <button class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Hide
+                            </button>
+                        </div>
+                    </div>
+                @endif
+
+
+
 
                     <!-- Post Content -->
                     <div class="flex justify-between items-center mb-2">
