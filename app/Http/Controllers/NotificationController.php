@@ -23,14 +23,27 @@ class NotificationController extends Controller
 
         return $friendRequestCount + $unreadNotifications;
     }
+    
     public function index()
     {
-        $notifications = Notification::where('user_id', auth()->id())
+        $userId = auth()->id();
+
+        // Friend requests (pending only)
+        $friendRequests = Friendship::where('receiver_id', $userId)
+            ->where('status', 'pending')
+            ->with('sender') // assuming you have sender() relationship in Friendship model
             ->latest()
             ->get();
 
-        Notification::where('user_id', auth()->id())->update(['is_read' => true]);
+        // Post/comment notifications
+        $notifications = Notification::where('user_id', $userId)
+            ->latest()
+            ->get();
 
-        return view('notifications.index', compact('notifications'));
+        // Mark comment notifications as read
+        Notification::where('user_id', $userId)->update(['is_read' => true]);
+
+        return view('notifications.index', compact('notifications', 'friendRequests'));
     }
+
 }

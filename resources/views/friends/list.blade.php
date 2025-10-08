@@ -10,6 +10,11 @@
                         {{ $friend->name }}
                     </a>
                     <span class="text-gray-500 text-sm">{{ $friend->email }}</span>
+                    <form action="{{ route('friends.unfriend', $friend->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button>unfriend</button>
+                    </form>
                 </div>
             @endforeach
         @else

@@ -37,6 +37,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/friends/list', [FriendshipController::class, 'friendsList'])->name('friends.list');
     Route::get('/friends/{id}', [FriendshipController::class, 'show'])->name('friends.profile');
+Route::delete('/friends/{id}/unfriend', [FriendshipController::class, 'unfriend'])
+    ->name('friends.unfriend');
+
 
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');

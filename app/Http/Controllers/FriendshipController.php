@@ -49,7 +49,7 @@ class FriendshipController extends Controller
             ->whereNotIn('id', $friends)
             ->whereNotIn('id', $receivedRequests)
             ->get();
-
+        
         return view('friends.index', [
             'users' => $users,
             'pending' => $sentRequests, // for "Request Sent" state
@@ -163,6 +163,32 @@ class FriendshipController extends Controller
 
         return view('friends.profile', compact('friend', 'posts', 'isFriend'));
     }
+
+public function unfriend($id)
+{
+    $userId = auth()->id();
+
+    // Find friendship between the two users
+    $friendship = Friendship::where(function ($query) use ($userId, $id) {
+        $query->where('sender_id', $userId)
+              ->where('receiver_id', $id);
+    })->orWhere(function ($query) use ($userId, $id) {
+        $query->where('sender_id', $id)
+              ->where('receiver_id', $userId);
+    })->first();
+
+    if ($friendship) {
+        // Option 1: delete friendship
+        // $friendship->delete();
+
+        // Option 2: mark as unfriended
+        $friendship->update(['status' => 'unfriend']);
+    }
+
+    return redirect()->route('friends.index')
+                     ->with('success', 'You have unfriended this user.');
+}
+
 
 
 
