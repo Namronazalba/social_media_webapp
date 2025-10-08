@@ -24,18 +24,6 @@
                         {{ __('Friends') }}
                     </x-nav-link>
 
-                    @php
-                        $friendRequestCount = \App\Models\Friendship::where('receiver_id', auth()->id())
-                            ->where('status', 'pending')
-                            ->count();
-
-                        $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())
-                            ->where('is_read', false)
-                            ->count();
-
-                        $pendingCount = $friendRequestCount + $unreadNotifications;
-                    @endphp
-
                     <div class="flex justify-end pr-6 mt-3">
                         <a href="{{ route('notifications.index') }}" class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
                             🔔
@@ -45,6 +33,7 @@
                                 </span>
                             @endif
                         </a>
+
                     </div>
 
                 </div>
@@ -111,18 +100,6 @@
                 {{ __('Friends') }}
             </x-nav-link>
 
-            @php
-                $friendRequestCount = \App\Models\Friendship::where('receiver_id', auth()->id())
-                    ->where('status', 'pending')
-                    ->count();
-
-                $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())
-                    ->where('is_read', false)
-                    ->count();
-
-                $pendingCount = $friendRequestCount + $unreadNotifications;
-            @endphp
-
             <div class="flex justify-end pr-6 mt-3">
                 <a href="{{ route('notifications.index') }}" class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
                     🔔
@@ -132,6 +109,7 @@
                         </span>
                     @endif
                 </a>
+
 
             </div>
         </div>
