@@ -25,14 +25,19 @@
                     </x-nav-link>
 
                     @php
-                        $pendingCount = \App\Models\Friendship::where('receiver_id', auth()->id())
+                        $friendRequestCount = \App\Models\Friendship::where('receiver_id', auth()->id())
                             ->where('status', 'pending')
                             ->count();
+
+                        $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())
+                            ->where('is_read', false)
+                            ->count();
+
+                        $pendingCount = $friendRequestCount + $unreadNotifications;
                     @endphp
 
                     <div class="flex justify-end pr-6 mt-3">
-                        <a href="{{ route('friends.requests') }}" 
-                        class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
+                        <a href="{{ route('notifications.index') }}" class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
                             🔔
                             @if($pendingCount > 0)
                                 <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
@@ -107,14 +112,19 @@
             </x-nav-link>
 
             @php
-                $pendingCount = \App\Models\Friendship::where('receiver_id', auth()->id())
+                $friendRequestCount = \App\Models\Friendship::where('receiver_id', auth()->id())
                     ->where('status', 'pending')
                     ->count();
+
+                $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())
+                    ->where('is_read', false)
+                    ->count();
+
+                $pendingCount = $friendRequestCount + $unreadNotifications;
             @endphp
 
             <div class="flex justify-end pr-6 mt-3">
-                <a href="{{ route('friends.requests') }}" 
-                class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
+                <a href="{{ route('notifications.index') }}" class="relative flex items-center gap-1 text-gray-700 hover:text-blue-600">
                     🔔
                     @if($pendingCount > 0)
                         <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
@@ -122,7 +132,8 @@
                         </span>
                     @endif
                 </a>
-                    </div>
+
+            </div>
         </div>
 
         <!-- Responsive Settings Options -->

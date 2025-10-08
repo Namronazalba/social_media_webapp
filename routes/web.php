@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FriendshipController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,7 +38,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/friends/list', [FriendshipController::class, 'friendsList'])->name('friends.list');
     Route::get('/friends/{id}', [FriendshipController::class, 'show'])->name('friends.profile');
 
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
 });
 

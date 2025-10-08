@@ -8,35 +8,32 @@ use App\Models\Friendship;
 
 class PostController extends Controller
 {
-public function index()
-{
-    $userId = auth()->id();
+    public function index()
+    {
+        $userId = auth()->id();
 
-    // Get all accepted friendships where user is either sender or receiver
-    $friendIds = Friendship::where(function ($q) use ($userId) {
-            $q->where('sender_id', $userId)
-              ->orWhere('receiver_id', $userId);
-        })
-        ->where('status', 'accepted')
-        ->get()
-        ->map(function ($friendship) use ($userId) {
-            return $friendship->sender_id == $userId
-                ? $friendship->receiver_id
-                : $friendship->sender_id;
-        })
-        ->toArray();
+        $friendIds = Friendship::where(function ($q) use ($userId) {
+                $q->where('sender_id', $userId)
+                ->orWhere('receiver_id', $userId);
+            })
+            ->where('status', 'accepted')
+            ->get()
+            ->map(function ($friendship) use ($userId) {
+                return $friendship->sender_id == $userId
+                    ? $friendship->receiver_id
+                    : $friendship->sender_id;
+            })
+            ->toArray();
 
-    // Combine user’s ID + friend IDs
-    $visibleIds = array_merge([$userId], $friendIds);
+        $visibleIds = array_merge([$userId], $friendIds);
 
-    // Fetch posts from user and friends, newest first
-    $posts = Post::whereIn('user_id', $visibleIds)
-                ->with('user')
-                ->latest()
-                ->get();
+        $posts = Post::whereIn('user_id', $visibleIds)
+                    ->with('user', 'comments.user')
+                    ->latest()
+                    ->get();
 
-    return view('dashboard', compact('posts'));
-}
+        return view('dashboard', compact('posts'));
+    }
 
     public function store(Request $request)
     {
@@ -54,7 +51,7 @@ public function index()
 
     public function edit(Post $post)
     {
-        $this->authorize('update', $post); // ensures only the owner can edit
+        $this->authorize('update', $post); 
 
         return view('posts.edit', compact('post'));
     }
